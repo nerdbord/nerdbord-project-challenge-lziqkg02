@@ -119,6 +119,27 @@ export const GeneratedForm: React.FC<Props> = ({
             ))}
           </div>
         );
+      case "checkbox":
+        return (
+          <div key={field.name} className="radio-group mb-5">
+            <label className="block font-bold mb-2">{field.label}</label>
+            {field.options?.map((option) => (
+              <label key={option}>
+                <input
+                  type="checkbox"
+                  name={field.name}
+                  value={option}
+                  checked={formState[field.name] === option}
+                  onChange={() => handleChange(field.name, option)}
+                />{" "}
+                <span className="block ml-6 text-gray-500 text-sm">
+                  {" "}
+                  {option}
+                </span>
+              </label>
+            ))}
+          </div>
+        );
       default:
         return null;
     }
