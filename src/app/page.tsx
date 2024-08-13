@@ -52,7 +52,7 @@ const FormGenerator = () => {
         <h1 className="text-2xl font-bold">{"Instant forms worth filling"}</h1>
         <h2 className="text-gray-500 mb-8">{"powered with AI"}</h2>
         <form action={formAction}>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center min-w-[400px]">
             <textarea
               name="prompt"
               value={_value}
