@@ -5,13 +5,6 @@ import { useFormState } from "react-dom";
 import { generateText } from "ai";
 import Link from "next/link";
 
-type FormGeneratorProps = {
-  title?: string;
-  subtitle?: string;
-  placeholder?: string;
-  buttonText?: string;
-};
-
 const initialState = {
   message: "",
 };
@@ -29,12 +22,7 @@ const formPrompts = [
   "Utwórz formularz rejestracji na webinar z polami na imię, nazwisko, adres e-mail oraz opcjonalne pytania do prelegenta.",
 ];
 
-const FormGenerator: React.FC<FormGeneratorProps> = ({
-  title = "Instant forms worth filling",
-  subtitle = "powered with AI",
-  placeholder = "Enter prompt text...",
-  buttonText = "Generate",
-}) => {
+const FormGenerator = () => {
   const [state, formAction, pending] = useFormState(generateForm, initialState);
   const [value, setValue] = React.useState("");
 
@@ -57,8 +45,8 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
         </button>
       </header>
       <main className="w-1/3 text-gray-900">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <h2 className="text-gray-500 mb-8">{subtitle}</h2>
+        <h1 className="text-2xl font-bold">{"Instant forms worth filling"}</h1>
+        <h2 className="text-gray-500 mb-8">{"powered with AI"}</h2>
         <form action={formAction}>
           <div className="flex flex-col items-center">
             <textarea
@@ -68,7 +56,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
                 setValue(e.currentTarget.value);
               }}
               placeholder={
-                placeholder ||
+                "Enter prompt text..." ||
                 "Wygeneruj mi formularz dla moich gości urodzinowych, którzy będą mieli ochotę na pizzę 🍕"
               }
               className="border border-gray-400 rounded-lg p-2 w-full mb-4 min-h-[112px]"
@@ -78,7 +66,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
               disabled={pending}
               className="bg-black text-white py-2 px-6 rounded-lg flex items-center"
             >
-              {pending ? "Generating form..." : buttonText}
+              {pending ? "Generating form..." : "Generate"}
             </button>
           </div>
         </form>
