@@ -1,10 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { FormFieldSchemaType } from "/src/schema";
 import { FormState } from "@prisma/client";
 import { PublishFormButton } from "/src/components/PublishFormButton";
+import { saveAndPublishForm } from "/src/app/actions";
 
 type Props = {
   formId: string;
@@ -12,6 +13,10 @@ type Props = {
   fields: FormFieldSchemaType[];
   editable?: boolean;
   state: FormState;
+};
+
+const initialState = {
+  message: "",
 };
 
 export const GeneratedForm: React.FC<Props> = ({
@@ -24,6 +29,10 @@ export const GeneratedForm: React.FC<Props> = ({
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
   const router = useRouter();
   const isFormPublished = state === FormState.PUBLISHED;
+  const [_state, saveAndPublish, pending] = useFormState(
+    saveAndPublishForm,
+    initialState,
+  );
 
   const handleChange = (name: string, value: any) => {
     setFormState((prevState) => ({
@@ -133,7 +142,9 @@ export const GeneratedForm: React.FC<Props> = ({
         <form>{fields.map((field) => renderInputField(field))}</form>
         {editable && (
           <div className="flex justify-between">
-            <PublishFormButton formId={formId} />
+            <form action={saveAndPublish}>
+              <PublishFormButton formId={formId} />
+            </form>
             <button className="px-4 py-2 bg-black text-white rounded-md text-lg">
               Share form
             </button>

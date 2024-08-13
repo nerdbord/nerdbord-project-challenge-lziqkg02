@@ -4,6 +4,7 @@ import { generateForm } from "/src/app/actions";
 import { useFormState } from "react-dom";
 import { generateText } from "ai";
 import Link from "next/link";
+import { GenerateFormButton } from "/src/components/GenerateFormButton";
 
 const initialState = {
   message: "",
@@ -61,13 +62,7 @@ const FormGenerator = () => {
               }
               className="border border-gray-400 rounded-lg p-2 w-full mb-4 min-h-[112px]"
             />
-            <button
-              type={"submit"}
-              disabled={pending}
-              className="bg-black text-white py-2 px-6 rounded-lg flex items-center"
-            >
-              {pending ? "Generating form..." : "Generate"}
-            </button>
+            <GenerateFormButton />
           </div>
         </form>
       </main>
