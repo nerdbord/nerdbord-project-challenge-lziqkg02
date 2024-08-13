@@ -1,8 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { generateForm } from "/src/app/actions";
 import { useFormState } from "react-dom";
-import { generateText } from "ai";
+
 import Link from "next/link";
 import { GenerateFormButton } from "/src/components/GenerateFormButton";
 
@@ -24,15 +24,18 @@ const formPrompts = [
 ];
 
 const FormGenerator = () => {
-  const [state, formAction, pending] = useFormState(generateForm, initialState);
-  const [value, setValue] = React.useState("");
-
-  console.log("state", state);
-  console.log("formAction", formAction);
-  console.log("pending", pending);
+  const [_state, formAction, pending] = useFormState(
+    generateForm,
+    initialState,
+  );
+  const [_value, setValue] = React.useState("");
 
   const memoRandomPrompt = React.useMemo(() => {
     return formPrompts[Math.floor(Math.random() * formPrompts.length)];
+  }, []);
+
+  useEffect(() => {
+    setValue(memoRandomPrompt);
   }, []);
 
   return (
@@ -52,7 +55,7 @@ const FormGenerator = () => {
           <div className="flex flex-col items-center">
             <textarea
               name="prompt"
-              value={memoRandomPrompt}
+              value={_value}
               onChange={(e) => {
                 setValue(e.currentTarget.value);
               }}
