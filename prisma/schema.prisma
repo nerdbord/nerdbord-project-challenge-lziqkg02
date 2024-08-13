@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql" // or your preferred database provider
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Form {
+  id          String    @id @default(uuid())
+  title       String
+  fields      Json
+  state       FormState @default(DRAFT)
+  createdAt   DateTime  @default(now())
+  webhookUrl  String?
+  clerkUserId String? // This will be used later when integrating with Clerk
+}
+
+enum FormState {
+  DRAFT
+  PUBLISHED
+}
