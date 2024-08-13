@@ -48,7 +48,7 @@ const FormGenerator = () => {
           Log in
         </button>
       </header>
-      <main className="w-1/3 text-gray-900">
+      <main className="text-gray-900 min-w-[320px]">
         <h1 className="text-2xl font-bold">{"Instant forms worth filling"}</h1>
         <h2 className="text-gray-500 mb-8">{"powered with AI"}</h2>
         <form action={formAction}>
