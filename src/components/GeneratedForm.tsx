@@ -145,9 +145,11 @@ export const GeneratedForm: React.FC<Props> = ({
             <form action={saveAndPublish}>
               <PublishFormButton formId={formId} />
             </form>
-            <button className="px-4 py-2 bg-black text-white rounded-md text-lg">
-              Share form
-            </button>
+            {isFormPublished && (
+              <button className="px-4 py-2 bg-black text-white rounded-md text-lg">
+                Share form
+              </button>
+            )}
           </div>
         )}
         {!editable && (
