@@ -5,6 +5,7 @@ import { useFormState } from "react-dom";
 
 import Link from "next/link";
 import { GenerateFormButton } from "/src/components/GenerateFormButton";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 const initialState = {
   message: "",
@@ -44,9 +45,20 @@ const FormGenerator = () => {
         <Link href={"/f"} className="text-black">
           Forms database
         </Link>
-        <button className="bg-black text-white py-2 px-4 rounded-lg">
-          Log in
-        </button>
+        <SignedOut>
+          <SignInButton>
+            <button className="bg-black text-white py-2 px-4 rounded-lg">
+              Log in
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton>
+            <button className="bg-white border-black text-white py-2 px-4 rounded-lg">
+              Log out
+            </button>
+          </UserButton>
+        </SignedIn>
       </header>
       <main className="text-gray-900 min-w-[320px]">
         <h1 className="text-2xl font-bold">{"Instant forms worth filling"}</h1>

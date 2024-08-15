@@ -5,7 +5,15 @@ export const FormFieldSchema = z.object({
   name: z.string(),
   label: z.string(),
   value: z.union([z.string(), z.number(), z.null()]), // The initial value, if any
-  type: z.enum(["text", "number", "date", "select", "checkbox", "radio"]), // Define the allowed input types
+  type: z.enum([
+    "text",
+    "number",
+    "date",
+    "select",
+    "checkbox",
+    "radio",
+    "time",
+  ]), // Define the allowed input types
   placeholder: z.string().optional(), // Placeholder text, if any
   options: z.array(z.string()).optional(), // Optional array for select input types
 });

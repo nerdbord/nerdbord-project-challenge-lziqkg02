@@ -2,10 +2,10 @@
 import { generateObject } from "ai";
 import { openai } from "../openAI";
 import { prisma } from "../lib/prisma";
-import { FormSchema, FormSchemaType } from "/src/schema";
+import { FormFieldSchema, FormSchema, FormSchemaType } from "/src/schema";
 import { redirect } from "next/navigation";
 import { FormState, Prisma } from "@prisma/client";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function generateForm(prevState: any, formData: FormData) {
   const prompt = formData.get("prompt") as string;
@@ -27,11 +27,21 @@ export async function generateForm(prevState: any, formData: FormData) {
   revalidateTag("forms"); // Update cached posts
 }
 
+export async function regenerateFormField(prompt: string) {
+  const { object } = await generateObject({
+    model: openai("gpt-4o-mini"),
+    prompt,
+    schema: FormFieldSchema,
+  });
+  return object;
+}
+
 export const saveAndPublishForm = async (
   prevState: any,
   formData: FormData,
 ) => {
   const formId = formData.get("formId") as string;
+  const fields = formData.get("fields") as string;
 
   if (!formId) {
     return {
@@ -49,10 +59,11 @@ export const saveAndPublishForm = async (
 
   const updatedForm = await updateForm(foundForm.id, {
     state: FormState.PUBLISHED,
+    fields: JSON.parse(fields) as FormSchemaType[],
   });
 
   redirect(`/f`); // Navigate to the new post page
-  revalidateTag("forms"); // Update cached posts
+  revalidatePath("/f"); // Update cached posts
 };
 
 export async function saveForm(title: string, fields: any) {
@@ -84,10 +95,11 @@ export async function getForm(id: string) {
   }
 }
 
-export async function getFormsByState(state: FormState) {
+export async function getUserFormsByState(userId: string, state: FormState) {
   try {
     const forms = await prisma.form.findMany({
       where: {
+        clerkUserId: userId,
         state,
       },
     });
@@ -110,5 +122,59 @@ export async function updateForm(id: string, data: Prisma.FormUpdateInput) {
   } catch (error) {
     console.error("Error updating form:", error);
     throw new Error("Failed to update form");
+  }
+}
+
+export async function tryConnectUserToForm(
+  formId: string,
+  clerkUserId: string,
+) {
+  const form = await prisma.form.findUnique({
+    where: {
+      id: formId,
+    },
+  });
+
+  if (!form) {
+    return null;
+  }
+
+  if (form.clerkUserId) {
+    return null;
+  }
+
+  const updatedForm = await updateForm(formId, {
+    clerkUserId,
+  });
+
+  return updatedForm;
+}
+
+export async function deleteUserFormById(id: string, userId: string) {
+  try {
+    const form = await prisma.form.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!form) {
+      throw new Error("Form not found");
+    }
+
+    if (form.clerkUserId !== userId) {
+      throw new Error("User does not own form");
+    }
+
+    await prisma.form.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath("/f");
+  } catch (error) {
+    console.error("Error deleting form:", error);
+    throw new Error("Failed to delete form");
   }
 }
