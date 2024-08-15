@@ -39,9 +39,9 @@ export async function regenerateFormField(
   const { object } = await generateObject({
     model: openai("gpt-4o-mini"),
     prompt: `
-        Update previous form field with new information based on the prompt: "${prompt}"
+        Update previous form field data based on the prompt: "${prompt}. Change only what is necessary."
         
-        Previous field:
+        Previous field data:
         ${JSON.stringify(prevField)}
     `,
     schema: FormFieldSchema,
