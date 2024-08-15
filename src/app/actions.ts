@@ -2,7 +2,12 @@
 import { generateObject } from "ai";
 import { openai } from "../openAI";
 import { prisma } from "../lib/prisma";
-import { FormFieldSchema, FormSchema, FormSchemaType } from "/src/schema";
+import {
+  FormFieldSchema,
+  FormFieldSchemaType,
+  FormSchema,
+  FormSchemaType,
+} from "/src/schema";
 import { redirect } from "next/navigation";
 import { FormState, Prisma } from "@prisma/client";
 import { revalidatePath, revalidateTag } from "next/cache";
@@ -27,10 +32,18 @@ export async function generateForm(prevState: any, formData: FormData) {
   revalidateTag("forms"); // Update cached posts
 }
 
-export async function regenerateFormField(prompt: string) {
+export async function regenerateFormField(
+  prompt: string,
+  prevField: FormFieldSchemaType,
+) {
   const { object } = await generateObject({
     model: openai("gpt-4o-mini"),
-    prompt,
+    prompt: `
+        Update previous form field with new information based on the prompt: "${prompt}"
+        
+        Previous field:
+        ${JSON.stringify(prevField)}
+    `,
     schema: FormFieldSchema,
   });
   return object;

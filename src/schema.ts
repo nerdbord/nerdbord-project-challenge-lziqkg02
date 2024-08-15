@@ -15,6 +15,7 @@ export const FormFieldSchema = z.object({
     "time",
   ]), // Define the allowed input types
   placeholder: z.string().optional(), // Placeholder text, if any
+  required: z.boolean().optional().describe("Whether the field is required"),
   options: z.array(z.string()).optional(), // Optional array for select input types
 });
 

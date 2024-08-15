@@ -82,13 +82,12 @@ export const GeneratedForm: React.FC<Props> = ({
     prevName: string,
     updatedField: FormFieldSchemaType,
   ) => {
-    console.log("updatedField", updatedField);
     setFields((prevFields) =>
       prevFields.map((field) =>
         field.name === prevName ? updatedField : field,
       ),
     );
-    console.log("fields", fields);
+
     setSelectedField(null);
     setContextMenuPosition(null);
   };
@@ -96,14 +95,13 @@ export const GeneratedForm: React.FC<Props> = ({
   const renderInputField = (field: FormFieldSchemaType) => {
     const commonProps = {
       className: "w-full p-2 border border-gray-300 rounded-md",
+      required: field.required,
       value: formState[field.name] || "",
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
         handleChange(field.name, e.target.value),
     };
 
     const renderField = () => {
-      console.log("field", field);
-
       switch (field.type) {
         case "text":
         case "number":
