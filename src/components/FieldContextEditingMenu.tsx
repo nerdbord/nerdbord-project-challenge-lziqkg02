@@ -58,7 +58,7 @@ export const FieldContextEditingMenu: React.FC<ContextMenuProps> = ({
     setIsRegenerating(true);
     try {
       // Simulate an API call to regenerate the field based on the prompt
-      const regeneratedField = await regenerateFormField(prompt);
+      const regeneratedField = await regenerateFormField(prompt, field);
 
       // Update the field with the regenerated data
       setEditedField(regeneratedField);
