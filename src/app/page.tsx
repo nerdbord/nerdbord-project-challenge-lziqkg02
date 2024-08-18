@@ -77,13 +77,13 @@ const FormGenerator = () => {
                 <span className="text-gray-500">or</span>
                 <div className="border-t border-gray-300 flex-grow ml-2"></div>
               </div>
-              {/* <SignedOut> */}
+              <SignedOut>
               <SignInButton>
                 <button className="btn btn-outline w-full">
                   Log in
                 </button>
               </SignInButton>
-              {/* </SignedOut> */}
+              </SignedOut>
             </div>
           </div>
         </form>
