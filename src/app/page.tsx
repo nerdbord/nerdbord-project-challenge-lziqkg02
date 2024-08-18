@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect } from "react";
 import { generateForm } from "/src/app/actions";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 
 import Link from "next/link";
 import { GenerateFormButton } from "/src/components/GenerateFormButton";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import CustomAccordion from "../components/CustomAccordion";
 
 const initialState = {
   message: "",
@@ -25,61 +26,70 @@ const formPrompts = [
 ];
 
 const FormGenerator = () => {
-  const [_state, formAction, pending] = useFormState(
-    generateForm,
-    initialState,
-  );
-  const [_value, setValue] = React.useState("");
+  const [state, formAction] = useFormState(generateForm, initialState);
+  const { pending } = useFormStatus();
+  const [value, setValue] = React.useState("");
 
   const memoRandomPrompt = React.useMemo(() => {
     return formPrompts[Math.floor(Math.random() * formPrompts.length)];
   }, []);
 
   useEffect(() => {
-    setValue(memoRandomPrompt);
-  }, []);
+    console.log("Pending state changed:", pending);
+  }, [pending]);
 
+  useEffect(() => {
+    setValue(memoRandomPrompt);
+  }, [memoRandomPrompt]);
+
+
+  
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-white text-center">
-      <header className="absolute top-8 right-8 flex items-center space-x-4">
-        <Link href={"/f"} className="text-black">
-          Forms database
-        </Link>
-        <SignedOut>
-          <SignInButton>
-            <button className="bg-black text-white py-2 px-4 rounded-lg">
-              Log in
-            </button>
-          </SignInButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton>
-            <button className="bg-white border-black text-white py-2 px-4 rounded-lg">
-              Log out
-            </button>
-          </UserButton>
-        </SignedIn>
-      </header>
-      <main className="text-gray-900 min-w-[320px]">
-        <h1 className="text-2xl font-bold">{"Instant forms worth filling"}</h1>
-        <h2 className="text-gray-500 mb-8">{"powered with AI"}</h2>
+    <div className="min-h-screen bg-white text-center">
+      <main className="text-gray-900 min-w-[320px] mx-auto px-4 mt-12">
+{/* loading do odkomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
+{/* <LoadingScreen /> */}
+
+{/* wszystko niżej do zakomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
+
+        <h1 className="text-3xl font-semibold text-center text-[#4338CA] leading-[40px] font-roboto mb-2">
+          {"Instant forms"} <br /> {"worth filling"}
+        </h1>
+        <h2 className="text-center text-[16px] font-roboto leading-[24px] text-[#94A3B8] mb-8">
+          {"powered with AI"}
+        </h2>
         <form action={formAction}>
-          <div className="flex flex-col items-center min-w-[400px]">
+          <div className="flex flex-col items-center w-full max-w-xl mx-auto">
             <textarea
               name="prompt"
-              value={_value}
+              value={value}
               onChange={(e) => {
                 setValue(e.currentTarget.value);
               }}
-              placeholder={
-                "Enter prompt text..." ||
-                "Wygeneruj mi formularz dla moich gości urodzinowych, którzy będą mieli ochotę na pizzę 🍕"
-              }
-              className="border border-gray-400 rounded-lg p-2 w-full mb-4 min-h-[112px]"
+              placeholder="Describe form you want to create..."
+              className="flex-grow self-stretch overflow-hidden text-gray-900 placeholder:text-[#D1D5DB] text-sm font-roboto leading-[20px] p-2 border border-gray-300 rounded-lg w-full mb-4 min-h-[112px] focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
             />
-            <GenerateFormButton />
+            <CustomAccordion />
+            <div className="flex flex-col items-center w-full mt-4">
+              <GenerateFormButton />
+              <div className="flex items-center w-full m-2">
+                <div className="border-t border-gray-300 flex-grow mr-2"></div>
+                <span className="text-gray-500">or</span>
+                <div className="border-t border-gray-300 flex-grow ml-2"></div>
+              </div>
+              {/* <SignedOut> */}
+              <SignInButton>
+                <button className="btn btn-outline w-full">
+                  Log in
+                </button>
+              </SignInButton>
+              {/* </SignedOut> */}
+            </div>
           </div>
         </form>
+
+{/* koniec komentarza */}
+
       </main>
     </div>
   );

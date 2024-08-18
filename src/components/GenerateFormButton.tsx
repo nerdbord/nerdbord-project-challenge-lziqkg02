@@ -1,6 +1,7 @@
 import React from "react";
 import { generateForm, saveAndPublishForm } from "/src/app/actions";
 import { useFormState, useFormStatus } from "react-dom";
+import GenerateFormBtnIcon from "./icons/GenerateFormBtnIcon";
 
 export const GenerateFormButton = () => {
   const { pending } = useFormStatus();
@@ -9,9 +10,9 @@ export const GenerateFormButton = () => {
     <button
       type={"submit"}
       disabled={pending}
-      className="bg-black text-white py-2 px-6 rounded-lg flex items-center"
+    className="btn btn-primary w-full py-2"
     >
-      {pending ? "Generating form..." : "Generate"}
+      {"Generate new form"} <GenerateFormBtnIcon />
     </button>
   );
 };
