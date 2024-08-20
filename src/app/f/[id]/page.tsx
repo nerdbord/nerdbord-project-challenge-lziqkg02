@@ -22,6 +22,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       formId={foundForm.id}
       formTitle={foundForm.title}
       fields={foundForm.fields as FormFieldSchemaType[]}
+      webhookUrl={foundForm.webhookUrl || ""}
       state={foundForm.state}
     />
   );

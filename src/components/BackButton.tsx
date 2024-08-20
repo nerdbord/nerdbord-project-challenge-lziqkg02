@@ -5,12 +5,7 @@ import { useRouter } from "next/navigation";
 export const BackButton = () => {
   const router = useRouter();
   return (
-    <button
-      onClick={() => {
-        router.back();
-      }}
-      className="bg-none border-none text-lg cursor-pointer mb-5"
-    >
+    <button className="link link-hover" onClick={() => router.back()}>
       &larr; Back
     </button>
   );

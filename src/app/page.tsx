@@ -7,6 +7,7 @@ import Link from "next/link";
 import { GenerateFormButton } from "/src/components/GenerateFormButton";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import CustomAccordion from "../components/CustomAccordion";
+import LoadingScreen from "/src/components/LoadingScreen/LoadingScreen";
 
 const initialState = {
   message: "",
@@ -27,7 +28,6 @@ const formPrompts = [
 
 const FormGenerator = () => {
   const [state, formAction] = useFormState(generateForm, initialState);
-  const { pending } = useFormStatus();
   const [value, setValue] = React.useState("");
 
   const memoRandomPrompt = React.useMemo(() => {
@@ -35,28 +35,22 @@ const FormGenerator = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Pending state changed:", pending);
-  }, [pending]);
-
-  useEffect(() => {
     setValue(memoRandomPrompt);
   }, [memoRandomPrompt]);
 
-
-  
   return (
     <div className="min-h-screen bg-white text-center">
-      <main className="text-gray-900 min-w-[320px] mx-auto px-4 mt-12">
-{/* loading do odkomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
-{/* <LoadingScreen /> */}
+      <main className="max-w-[434px] mx-auto px-4 pt-[108px]">
+        {/* loading do odkomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
+        <LoadingScreen />
 
-{/* wszystko niżej do zakomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
+        {/* wszystko niżej do zakomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
 
         <h1 className="text-3xl font-semibold text-center text-[#4338CA] leading-[40px] font-roboto mb-2">
-          {"Instant forms"} <br /> {"worth filling"}
+          Create your own form <br /> within seconds
         </h1>
         <h2 className="text-center text-[16px] font-roboto leading-[24px] text-[#94A3B8] mb-8">
-          {"powered with AI"}
+          {"Powered with AI"}
         </h2>
         <form action={formAction}>
           <div className="flex flex-col items-center w-full max-w-xl mx-auto">
@@ -67,30 +61,46 @@ const FormGenerator = () => {
                 setValue(e.currentTarget.value);
               }}
               placeholder="Describe form you want to create..."
-              className="flex-grow self-stretch overflow-hidden text-gray-900 placeholder:text-[#D1D5DB] text-sm font-roboto leading-[20px] p-2 border border-gray-300 rounded-lg w-full mb-4 min-h-[112px] focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              className="flex-grow self-stretch overflow-hidden text-gray-900 placeholder:text-[#D1D5DB] text-sm font-roboto leading-[20px] p-2 border border-gray-300 rounded-lg w-full mb-4 min-h-[112px] bg-white focus:outline-none resize-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
             />
             <CustomAccordion />
             <div className="flex flex-col items-center w-full mt-4">
               <GenerateFormButton />
-              <div className="flex items-center w-full m-2">
-                <div className="border-t border-gray-300 flex-grow mr-2"></div>
-                <span className="text-gray-500">or</span>
-                <div className="border-t border-gray-300 flex-grow ml-2"></div>
-              </div>
+
               <SignedOut>
-              <SignInButton>
-                <button className="btn btn-outline w-full">
-                  Log in
-                </button>
-              </SignInButton>
+                <div className="flex items-center flex-col w-full m-2">
+                  <div className="border-t border-gray-300 flex-grow mr-2"></div>
+                  <p className="text-gray-500">or</p>
+                  <div className="border-t border-gray-300 flex-grow ml-2"></div>
+                  <SignInButton forceRedirectUrl={"/f"}>
+                    <button
+                      type={"button"}
+                      className="btn btn-outline w-full m-2 text-gray-900"
+                    >
+                      Log in
+                    </button>
+                  </SignInButton>
+                </div>
               </SignedOut>
+
+              <SignedIn>
+                <div className="flex items-center flex-col w-full m-2">
+                  <div className="border-t border-gray-300 flex-grow mr-2"></div>
+                  <p className="text-gray-500">or</p>
+                  <div className="border-t border-gray-300 flex-grow ml-2"></div>
+                  <Link
+                    href={"/f"}
+                    className="btn btn-outline w-full m-2 text-gray-900"
+                  >
+                    Go to my forms
+                  </Link>
+                </div>
+              </SignedIn>
             </div>
           </div>
         </form>
-
-{/* koniec komentarza */}
-
       </main>
+      <LoadingScreen />
     </div>
   );
 };

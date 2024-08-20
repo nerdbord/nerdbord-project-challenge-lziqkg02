@@ -10,7 +10,7 @@ export const GenerateFormButton = () => {
     <button
       type={"submit"}
       disabled={pending}
-    className="btn btn-primary w-full py-2"
+      className="btn btn-primary w-full py-2 text-white"
     >
       {"Generate new form"} <GenerateFormBtnIcon />
     </button>

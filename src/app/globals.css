@@ -22,3 +22,11 @@
     text-wrap: balance;
   }
 }
+
+.btn-primary {
+  background: #4338CA;
+  border-color: #4338CA;
+  color: white;
+  border-color: transparent;
+}
+

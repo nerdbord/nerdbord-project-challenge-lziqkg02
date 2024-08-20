@@ -55,7 +55,13 @@ export const saveAndPublishForm = async (
   formData: FormData,
 ) => {
   const formId = formData.get("formId") as string;
+  const formName = formData.get("formName") as string;
+  const webhookUrl = formData.get("webhookUrl") as string;
   const fields = formData.get("fields") as string;
+
+  console.log("formId", formId);
+  console.log("formName", formName);
+  console.log("webhookUrl", webhookUrl);
 
   if (!formId) {
     return {
@@ -71,8 +77,22 @@ export const saveAndPublishForm = async (
     };
   }
 
+  if (!formName) {
+    return {
+      message: "Form name not found",
+    };
+  }
+
+  if (!webhookUrl) {
+    return {
+      message: "WebhookUrl not found",
+    };
+  }
+
   const updatedForm = await updateForm(foundForm.id, {
+    title: formName,
     state: FormState.PUBLISHED,
+    webhookUrl,
     fields: JSON.parse(fields) as FormSchemaType[],
   });
 
@@ -162,6 +182,21 @@ export async function tryConnectUserToForm(
   });
 
   return updatedForm;
+}
+
+export async function deleteFormById(id: string) {
+  try {
+    await prisma.form.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath("/f");
+  } catch (error) {
+    console.error("Error deleting form:", error);
+    throw new Error("Failed to delete form");
+  }
 }
 
 export async function deleteUserFormById(id: string, userId: string) {

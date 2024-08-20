@@ -1,88 +1,107 @@
 "use client";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DropdownMenu } from "/src/components/DropdownMenu";
 import { useCopyToClipboard } from "/src/hooks/useCopyToClipboard";
-import { FormState } from "@prisma/client";
-import { useSession } from "@clerk/nextjs";
 import { deleteUserFormById } from "/src/app/actions";
+import { useSession } from "@clerk/nextjs";
+import { FormState } from "@prisma/client";
+import { TrashIcon, ShareIcon } from "@heroicons/react/24/outline";
 
 export type FormCardProps = {
   id?: string;
   title: string;
-  answers: number;
-  isNew?: boolean;
   state?: FormState;
 };
 
-export const FormCard: React.FC<FormCardProps> = ({
-  title,
-  answers,
-  isNew,
-  id,
-  state,
-}) => {
+export const FormCard: React.FC<FormCardProps> = ({ title, id, state }) => {
   const { push } = useRouter();
   const { copyText } = useCopyToClipboard();
   const { session } = useSession();
   const isPublished = state === FormState.PUBLISHED;
 
-  const actions = [
-    {
-      title: "Edit",
-      onClick: () => {
-        push(`/f/${id}/edit`);
-      },
-    },
+  const [showModal, setShowModal] = useState(false);
+
+  const backgroundColors = [
+    "bg-pink-200",
+    "bg-blue-200",
+    "bg-green-200",
+    "bg-purple-200",
   ];
 
-  if (isPublished) {
-    actions.push(
-      {
-        title: "Preview",
-        onClick: () => {
-          push(`/f/${id}`);
-        },
-      },
-      {
-        title: "Share",
-        onClick: () => {
-          copyText(`${window.location.origin}/f/${id}`);
-        },
-      },
-    );
-  }
+  const randomBackground = useMemo(
+    () => backgroundColors[Math.floor(Math.random() * backgroundColors.length)],
+    [],
+  );
 
-  id &&
-    session?.id &&
-    actions.push({
-      title: "Delete",
-      onClick: async () => {
-        await deleteUserFormById(id, session.user.id);
-      },
-    });
+  const handleDelete = async () => {
+    if (session?.user && id) {
+      await deleteUserFormById(id, session.user.id);
+      setShowModal(false); // Close the modal after deletion
+    }
+  };
 
   return (
-    <div
-      onClick={() => {
-        if (isNew) {
-          push("/");
-        }
-      }}
-      className="relative text-center text-black text-sm flex items-center flex-col min-w-[244px]"
-    >
+    <>
       <div
-        className={`w-full h-[244px] rounded-lg bg-gray-300 mb-2 relative ${isNew ? "flex items-center justify-center" : ""}`}
+        onClick={() => {
+          push(`/f/${id}/edit`);
+        }}
+        className="card bg-base-100 card-compact shadow-xl cursor-pointer"
       >
-        {isNew && <span className="text-4xl text-black">+</span>}
+        <div
+          className={randomBackground.concat(" rounded-t-2xl")}
+          style={{
+            height: 191,
+          }}
+        />
+        <div className="card-body flex flex-col justify-between">
+          <h2 className="card-title">{title}</h2>
+          <div className="card-actions justify-end">
+            <button
+              className="btn btn-square"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowModal(true); // Show the confirmation modal
+              }}
+            >
+              <TrashIcon width={20} />
+            </button>
+            <button
+              className="btn btn-square"
+              onClick={(e) => {
+                e.stopPropagation();
+                copyText(`${window.location.origin}/f/${id}`);
+              }}
+            >
+              <ShareIcon width={20} />
+            </button>
+          </div>
+        </div>
       </div>
-      <div className={"absolute right-0 top-0 w-4"}>
-        {!isNew && <DropdownMenu actions={actions} />}
-      </div>
-      <div className="font-bold text-center">{title}</div>
-      {!isNew && (
-        <div className="text-gray-500 text-center">{answers} answers</div>
+
+      {/* Confirmation Modal */}
+      {showModal && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Confirm Deletion</h3>
+            <p className="py-4">
+              Are you sure you want to delete the form titled "{title}"? This
+              action cannot be undone.
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn btn-outline"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-error" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 };

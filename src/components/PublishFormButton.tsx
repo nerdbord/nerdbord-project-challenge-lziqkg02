@@ -2,6 +2,7 @@ import React from "react";
 import { useFormStatus } from "react-dom";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { useParams } from "next/navigation";
+import { FormFieldSchemaType } from "/src/schema";
 
 interface PublishFormButtonProps {
   formId: string;
@@ -15,11 +16,8 @@ export const PublishFormButton = (props: PublishFormButtonProps) => {
     <>
       <SignedOut>
         <SignInButton forceRedirectUrl={`/f/${id}/edit`}>
-          <button
-            type={"button"}
-            className="px-4 py-2 border border-black rounded-md text-lg"
-          >
-            Login to save
+          <button type={"button"} className="btn btn-primary">
+            Log in to save your form
           </button>
         </SignInButton>
       </SignedOut>
@@ -29,9 +27,9 @@ export const PublishFormButton = (props: PublishFormButtonProps) => {
           value={props.formId}
           type={"submit"}
           disabled={pending}
-          className="px-4 py-2 border border-black rounded-md text-lg"
+          className="btn btn-primary"
         >
-          {pending ? "Saving form..." : "Save and exit"}
+          {pending ? "Saving form..." : "Save form and exit"}
         </button>
       </SignedIn>
     </>

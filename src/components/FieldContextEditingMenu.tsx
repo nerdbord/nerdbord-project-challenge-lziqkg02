@@ -3,26 +3,11 @@ import { FormFieldSchemaType } from "/src/schema";
 import { regenerateFormField } from "/src/app/actions";
 
 const regenerationPrompts = [
-  "Change to select and add 5 options for favorite colors.",
-  "Change to text and set the placeholder to 'Enter your full name'.",
-  "Change to radio and add options for Yes, No, and Maybe.",
-  "Change to checkbox and add options for newsletter preferences.",
-  "Change to date and set the label to 'Select your birthdate'.",
-  "Change to number and set the placeholder to 'Enter your age'.",
-  "Change to select and add 10 default options with dog breeds.",
-  "Change to text and set the label to 'Enter your email address'.",
-  "Change to time and set the placeholder to 'Select preferred meeting time'.",
-  "Change to radio and add options for gender: Male, Female, Non-binary.",
-  "Change to checkbox and add options for selecting hobbies.",
-  "Change to select and add 5 default options for payment methods.",
-  "Change to text and set the placeholder to 'Enter your city of residence'.",
-  "Change to date and set the label to 'Choose your appointment date'.",
-  "Change to number and set the label to 'Enter your house number'.",
-  "Change to radio and add options for communication preferences: Email, Phone, SMS.",
-  "Change to checkbox and add options for dietary restrictions.",
-  "Change to select and add 8 default options for countries.",
-  "Change to text and set the placeholder to 'Enter your job title'.",
-  "Change to time and set the label to 'Select your preferred start time'.",
+  "Change label to {New Label}",
+  "Change placeholder to {New Placeholder}",
+  "Change input type to {New input type}",
+  "Add options {Option1, Option2} to the field",
+  "Set required status to {true / false}",
 ];
 
 type ContextMenuProps = {
@@ -77,35 +62,47 @@ export const FieldContextEditingMenu: React.FC<ContextMenuProps> = ({
     setPrompt(e.target.value);
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setPrompt(suggestion);
+  };
+
   return (
     <div
       style={style}
-      className="absolute bg-white border border-gray-300 rounded-lg shadow-lg p-4"
+      className="absolute bg-white rounded-lg shadow-lg p-6 w-96"
     >
-      <div className="mb-3">
-        <label className="block text-sm font-medium mb-1">
-          Edit {field.label} field
-        </label>
-        <textarea
-          value={prompt}
-          onChange={handlePromptChange}
-          className="w-full p-2 border border-gray-300 rounded-md"
-          placeholder="Enter a prompt"
-        />
+      <h2 className="text-xl font-semibold mb-3">Edit "{field.label}" field</h2>
+      <textarea
+        value={prompt}
+        onChange={handlePromptChange}
+        className="textarea textarea-bordered w-full mb-4 resize-none"
+        placeholder="What do you want to change?"
+      />
+      <div className="text-sm font-semibold mb-3">Suggestion for you</div>
+      <div className="space-y-2">
+        {regenerationPrompts.slice(0, 3).map((suggestion, index) => (
+          <button
+            key={index}
+            className="btn btn-ghost btn-sm w-full justify-start"
+            onClick={() => handleSuggestionClick(suggestion)}
+          >
+            ✨ {suggestion}
+          </button>
+        ))}
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-end mt-6 space-x-2">
+        <button
+          className="btn btn-link text-gray-900 no-underline"
+          onClick={onClose}
+        >
+          Cancel
+        </button>
         <button
           disabled={isRegenerating}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+          className={`btn btn-primary ${isRegenerating ? "loading" : ""}`}
           onClick={handleRegenerate}
         >
           {isRegenerating ? "Regenerating..." : "Regenerate"}
-        </button>
-        <button
-          className="px-4 py-2 text-blue-500 rounded-md"
-          onClick={onClose}
-        >
-          Close
         </button>
       </div>
     </div>
