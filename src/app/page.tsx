@@ -41,9 +41,6 @@ const FormGenerator = () => {
   return (
     <div className="min-h-screen bg-white text-center">
       <main className="max-w-[434px] mx-auto px-4 pt-[108px]">
-        {/* loading do odkomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
-        <LoadingScreen />
-
         {/* wszystko niżej do zakomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
 
         <h1 className="text-3xl font-semibold text-center text-[#4338CA] leading-[40px] font-roboto mb-2">
@@ -98,6 +95,8 @@ const FormGenerator = () => {
               </SignedIn>
             </div>
           </div>
+          {/* loading do odkomentowania, nie działa mi tu pending, z useFormStatus też nie. */}
+          <LoadingScreen />
         </form>
       </main>
       <LoadingScreen />

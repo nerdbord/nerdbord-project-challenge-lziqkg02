@@ -41,7 +41,7 @@ export const LoadingScreen: React.FC = () => {
         <h1 className="text-[#4338CA] text-3xl font-semibold font-roboto leading-[40px] mt-8">
           We are working on your form...
         </h1>
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-700 mt-2">
           Wait a minute, worthy things take time!
         </p>
       </div>
