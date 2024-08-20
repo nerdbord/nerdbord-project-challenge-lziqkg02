@@ -50,6 +50,26 @@ export async function regenerateFormField(
   return object;
 }
 
+export const sendFormDataToWebhook = async (
+  prevState: any,
+  formData: FormData,
+) => {
+  const webhookUrl = formData.get("webhookUrl") as string;
+
+  if (!webhookUrl) {
+    return {
+      message: "WebhookUrl not found",
+    };
+  }
+
+  const response = await fetch(webhookUrl, {
+    method: "POST",
+    body: formData,
+  });
+
+  redirect("/confirmation");
+};
+
 export const saveAndPublishForm = async (
   prevState: any,
   formData: FormData,

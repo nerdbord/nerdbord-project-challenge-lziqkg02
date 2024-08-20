@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { FormFieldSchemaType } from "/src/schema";
 import { FormState } from "@prisma/client";
 import { PublishFormButton } from "/src/components/PublishFormButton";
-import { deleteFormById, saveAndPublishForm } from "/src/app/actions";
+import {
+  deleteFormById,
+  saveAndPublishForm,
+  sendFormDataToWebhook,
+} from "/src/app/actions";
 import { useCopyToClipboard } from "/src/hooks/useCopyToClipboard";
 import { useUnsavedChangesWarning } from "/src/hooks/useUnsavedChangesWarning";
 import { useFormState } from "react-dom";
@@ -63,6 +67,10 @@ export const GeneratedForm: React.FC<Props> = ({
     saveAndPublishForm,
     initialState,
   );
+
+  const [_stat2e, sendForm] = useFormState(sendFormDataToWebhook, {
+    message: "",
+  });
 
   useUnsavedChangesWarning(
     !isFormPublished,
@@ -149,10 +157,10 @@ export const GeneratedForm: React.FC<Props> = ({
     const commonProps = {
       className: "input input-bordered w-full",
       required: field.required,
-      value: formState[field.name] || "",
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-        handleChange(field.name, e.target.value),
+      name: field.name,
     };
+
+    console.log("commonProps", commonProps);
 
     const renderField = () => {
       switch (field.type) {
@@ -276,8 +284,9 @@ export const GeneratedForm: React.FC<Props> = ({
         >
           {formTitle}
         </h1>
-        <form action={webhookUrl}>
+        <form action={sendForm}>
           {fields.map((field) => renderInputField(field))}
+          <input type="text" name={"webhookUrl"} hidden value={webhookUrl} />
           {editable && (
             <div className="flex items-center">
               <button type="button" className="btn" onClick={handleAddField}>
@@ -314,6 +323,12 @@ export const GeneratedForm: React.FC<Props> = ({
                     name={"formName"}
                     hidden
                     value={formTitle}
+                  />
+                  <input
+                    type="text"
+                    name={"webhookUrl"}
+                    hidden
+                    value={webhookUrl}
                   />
                   <PublishFormButton formId={formId} />
                 </form>
